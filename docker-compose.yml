@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  customerservice:
+    container_name: customerservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - customerservice
+    environment:
+        - AUTH_USER=playvox
+        - AUTH_PASS=pl4yv0x
+        - ATS_API_V1_URL=http://authservice:8100/service/auth
+        - US_API_V1_URL=http://userservice:8200/userservice/api/v1.0
+        - BAS_API_V1_URL=http://bankaccountservice:8300/bankaccountservice/api/v1.0
+    command: 'python app.py runserver 0.0.0.0:8400'
+    ports:
+        - 8400:8400
+    volumes:
+        - .:/app
+
+networks:
+  customerservice:
+    name: customerservice
+    driver: bridge
