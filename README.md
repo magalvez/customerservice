@@ -2,9 +2,10 @@
 
 ## Prepare your environment
 
-    ## 1) mkdir Playvox
-    ## 2) git clone https://github.com/magalvez/customerservice.git
-    ## 3) docker-compose up -d
+    ## 1) mkdir Playvox (check if was already created)
+    ## 2) cd Playvox
+    ## 3) git clone https://github.com/magalvez/customerservice.git
+    ## 4) docker-compose up -d
 
 # Service URL
 http://localhost:8400/
