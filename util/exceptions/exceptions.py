@@ -25,3 +25,27 @@ class InvalidFileExtension(HTTPException):
         self.data = {
             'message': "Invalid File Extension"
         }
+
+
+class BankAccountInsufficientFounds(HTTPException):
+    def __init__(self, account_number, amount, currency, workflow_messages):
+        HTTPException.__init__(self)
+        workflow_messages.\
+            append("ERROR MESSAGE: Insufficient funds to perform a {0} {1} withdrawal, account_number {2}.".
+                   format(amount, currency, account_number))
+        self.code = 409
+        self.data = {
+            'message': workflow_messages
+        }
+
+
+class UserInvalidVerification(HTTPException):
+    def __init__(self, user_id, pin, workflow_messages):
+        HTTPException.__init__(self)
+        workflow_messages. \
+            append("ERROR MESSAGE: The User your trying to process is not validate. [user_id: {} and pin: {}].".
+                   format(user_id, pin))
+        self.code = 401
+        self.data = {
+            'message': workflow_messages
+        }

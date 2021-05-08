@@ -6,7 +6,10 @@ from app.api.external.auth_api.v1_1.auth_service_api import generate_jwt_token
 from app.api.external.bank_api.v1_1.bank_account_service_api import get_account_balance, deposit_money, withdraw
 from app.api.external.trm.trm_api import get_current_trm
 from app.api.external.us_api.v1_1.user_service_api import validate_user_account
+
 from util.dict_helper import get
+
+from util.exceptions.exceptions import BankAccountInsufficientFounds, UserInvalidVerification
 
 
 class WorkflowProcessController(object):
@@ -160,7 +163,13 @@ class WorkflowProcessController(object):
     def validate_account(self, params):
         current_user = generate_jwt_token()
         self.token = current_user['token']
+
         validate_account = validate_user_account(params['user_id'], params['pin'], token=current_user['token'])
+        if not validate_account['is_valid']:
+            self.workflow_session['messages'].append('ERROR Executed step [validate_account] - params [{0}] - {1}'.
+                                                     format(params, validate_account))
+            raise UserInvalidVerification(params['user_id'], params['pin'], self.workflow_session['messages'])
+
         self.workflow_session['start']['user_id'] = params['user_id']
         self.workflow_session['start']['pin'] = params['pin']
         self.workflow_session['validate_account'] = validate_account
@@ -184,13 +193,30 @@ class WorkflowProcessController(object):
                                                  format(params, account_balance))
 
     def withdraw_in_pesos(self, params):
-        account_balance = withdraw(self.workflow_session['account_balance']['account_number'], params['money'],
+        amount = params['money']
+        balance = self.workflow_session['account_balance']['balance']
+        if amount > balance:
+            self.workflow_session['messages'].append('ERROR Executed step [withdraw_in_pesos] - params [{0}] - {1}'.
+                                                     format(params, balance))
+            raise BankAccountInsufficientFounds(self.workflow_session['account_balance']['account_number'],
+                                                amount, 'COP', self.workflow_session['messages'])
+
+        account_balance = withdraw(self.workflow_session['account_balance']['account_number'], amount,
                                    'COP', self.trm, self.token)
+
         self.workflow_session['account_balance']['balance'] = account_balance['balance']
         self.workflow_session['messages'].append('Executed step [withdraw_in_pesos] - params [{0}] - {1}'.
                                                  format(params, account_balance))
 
     def withdraw_in_dollars(self, params):
+        amount = params['money'] * self.trm
+        balance = self.workflow_session['account_balance']['balance']
+        if amount > balance:
+            self.workflow_session['messages'].append('ERROR Executed step [withdraw_in_dollars] - params [{0}] - {1}'.
+                                                     format(params, balance))
+            raise BankAccountInsufficientFounds(self.workflow_session['account_balance']['account_number'],
+                                                params['money'], 'USD', self.workflow_session['messages'])
+
         account_balance = withdraw(self.workflow_session['account_balance']['account_number'], params['money'],
                                    'USD', self.trm, self.token)
 

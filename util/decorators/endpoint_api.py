@@ -1,7 +1,8 @@
 
 from functools import wraps
 
-from util.exceptions.exceptions import ApiResponseNotFound, BadRequest, InvalidFileExtension
+from util.exceptions.exceptions import ApiResponseNotFound, BadRequest, InvalidFileExtension, \
+    BankAccountInsufficientFounds, UserInvalidVerification
 from util.response import json_response, handle_exception_json_response
 
 
@@ -31,6 +32,12 @@ def api_resource_endpoint():
                 return handle_exception_json_response(e)
 
             except InvalidFileExtension as e:
+                return handle_exception_json_response(e)
+
+            except BankAccountInsufficientFounds as e:
+                return handle_exception_json_response(e)
+
+            except UserInvalidVerification as e:
                 return handle_exception_json_response(e)
 
             except Exception as e:
