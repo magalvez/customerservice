@@ -191,8 +191,7 @@ class WorkflowProcessController(object):
                                                  format(params, account_balance))
 
     def withdraw_in_dollars(self, params):
-        amount = params['money'] * self.trm
-        account_balance = withdraw(self.workflow_session['account_balance']['account_number'], amount,
+        account_balance = withdraw(self.workflow_session['account_balance']['account_number'], params['money'],
                                    'USD', self.trm, self.token)
 
         self.workflow_session['account_balance']['balance'] = account_balance['balance']
