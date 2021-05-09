@@ -23,5 +23,4 @@ def generate_jwt_token():
         headers={'Content-Type': 'application/json'})
 
     json_response = json.loads(response.text)
-    print(json_response)
     return json_response

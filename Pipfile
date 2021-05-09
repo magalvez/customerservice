@@ -15,6 +15,8 @@ Flask-Restful = "==0.3.8"
 flask-mongoengine = "==1.0.0"
 werkzeug = "==1.0.1"
 requests = "==2.24.0"
+mock = "==2.0.0"
+contexter = "==0.1.4"
 
 [requires]
 python_version = "3.7"

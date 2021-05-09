@@ -49,3 +49,17 @@ class UserInvalidVerification(HTTPException):
         self.data = {
             'message': workflow_messages
         }
+
+
+class JsonDecodeError(ValueError):
+    """
+    Class to identify an exception raised if json.loads method fails, because it contains non serializable data
+    """
+
+    def __init__(self, text):
+        """
+        Initialize ValueError class
+        :param text: name of the parameter involved in the error. String, Ie. 'application'
+        """
+        self._text = text
+        self._message = "The received text couldn't be decoded: %s" % self._text
