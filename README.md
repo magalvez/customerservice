@@ -7,6 +7,10 @@
     ## 3) git clone https://github.com/magalvez/customerservice.git
     ## 4) docker-compose up -d
 
+# TEST
+The project contains integrations test using a `In Memory MongoDB database` to validate the endpoints operations,
+you can find it inside the folder `test/api/v1_0`
+
 # Service URL
 http://localhost:8400/
 
